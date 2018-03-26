@@ -1,4 +1,5 @@
 import React from "react";
+import { Modal } from "react-native";
 import {
   Container,
   Header,
@@ -8,47 +9,61 @@ import {
   ListItem,
   Text,
   Footer,
-  FooterTab
+  FooterTab,
+  Icon
 } from "native-base";
 
-import AddPicker from "./components/add-picker";
+import AddTodo from "./components/add-todo";
+import TodoList from "./components/todo-items";
 
 export default class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      selected2: undefined
+      modalVisible: false,
+      todoList: ["sample-todo"]
     };
   }
-  onValueChange2(value: string) {
+
+  closeModal() {
+    this.setState({ modalVisible: false });
+  }
+
+  openModal() {
+    this.setState({ modalVisible: true });
+  }
+
+  addTodo(todo) {
     this.setState({
-      selected2: value
+      todoList: this.state.todoList.concat([todo]),
+      modalVisible: false
     });
   }
+
   render() {
     return (
       <Container>
         <Header />
         <Content>
-          <List>
-            <ListItem>
-              <Text>Simon Mignolet</Text>
-            </ListItem>
-            <ListItem>
-              <Text>Nathaniel Clyne</Text>
-            </ListItem>
-            <ListItem>
-              <Text>Dejan Lovren</Text>
-            </ListItem>
-          </List>
+          <TodoList items={this.state.todoList} />
         </Content>
         <Footer>
           <FooterTab>
-            <Button>
-              <AddPicker />
+            <Button onPress={() => this.openModal()}>
+              <Icon name="ios-add" />
             </Button>
           </FooterTab>
         </Footer>
+        <Modal
+          visible={this.state.modalVisible}
+          animationType={"slide"}
+          onRequestClose={() => this.closeModal()}
+        >
+          <AddTodo
+            closeModal={this.closeModal.bind(this)}
+            addTodo={this.addTodo.bind(this)}
+          />
+        </Modal>
       </Container>
     );
   }
